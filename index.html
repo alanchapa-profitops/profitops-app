@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProfitOps - Smart RevOps</title>
+    <title>ProfitOps - Segutrends</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -973,15 +973,15 @@
     <!-- Header -->
     <header class="header">
         <div class="logo-container">
-            <div class="logo-icon">P</div>
+            <div class="logo-icon">S</div>
             <div>
-                <div class="logo-text">Profit Ops</div>
-                <div class="logo-subtitle">Smart RevOps</div>
+                <div class="logo-text">Segutrends</div>
+                <div class="logo-subtitle">ProfitOps Coach</div>
             </div>
         </div>
         <div class="user-info">
-            <span class="user-name">Alan Chapa</span>
-            <div class="user-avatar">AC</div>
+            <span class="user-name">Raymundo Chapa</span>
+            <div class="user-avatar">RC</div>
         </div>
     </header>
 
@@ -1002,7 +1002,7 @@
             <!-- Metrics Grid -->
             <div class="metrics-grid" id="metricsGrid">
                 <div class="metric-card">
-                    <div class="metric-label">Pipeline Generado (IMR)</div>
+                    <div class="metric-label">Pipeline (Rentas/mes)</div>
                     <div class="metric-value" id="metricPipeline">--</div>
                 </div>
                 <div class="metric-card">
@@ -1014,7 +1014,7 @@
                     <div class="metric-value" id="metricCierres">--</div>
                 </div>
                 <div class="metric-card">
-                    <div class="metric-label" id="metricObjetivoLabel">Objetivo Dic (IMR)</div>
+                    <div class="metric-label" id="metricObjetivoLabel">Objetivo Dic (Rentas)</div>
                     <div class="metric-value" id="metricObjetivo">--</div>
                 </div>
             </div>
@@ -1071,7 +1071,7 @@
                         <div class="chat-title-icon">🎯</div>
                         Coach de Ventas B2B
                     </div>
-                    <div class="chat-subtitle">Tu asistente de coaching personalizado</div>
+                    <div class="chat-subtitle">Tu asistente de coaching personalizado - Segutrends</div>
                     <div class="chat-status">
                         <div class="status-dot"></div>
                         <span class="status-text">Activo</span>
@@ -1096,14 +1096,16 @@
             <div class="chat-messages" id="chatMessages">
                 <div class="message assistant">
                     <div class="message-content">
-                        ¡Hola Alan! 👋 Soy tu Coach de Ventas B2B personal. 
+                        ¡Hola Raymundo! 👋 Soy tu Coach de Ventas B2B personal de Segutrends.
                         
-                        Estoy conectado a tu pipeline de Pipedrive y listo para ayudarte con:
+                        Estoy conectado a tu pipeline de Pipedrive y calibrado específicamente para tu negocio de multicotizadores de seguros. Puedo ayudarte con:
                         
                         • Análisis de tus llamadas de ventas (scoring 0-100)
-                        • Coaching personalizado usando SPIN, Challenger y MEDDIC
-                        • Preparación para llamadas importantes
-                        • Identificar patrones de mejora
+                        • Técnicas de CIERRE con metodología Sandler
+                        • Manejo de objeciones de precio
+                        • Preparación para demos importantes
+                        
+                        Tu objetivo: $56,000 MXN en rentas nuevas mensuales.
                         
                         ¿En qué te puedo ayudar hoy?
                     </div>
@@ -1114,8 +1116,8 @@
             <div class="chat-input-container">
                 <div class="quick-actions">
                     <button class="quick-action" onclick="sendQuickAction('Analiza mis alertas de hoy y dame las 3 acciones más urgentes')">📊 Analizar alertas</button>
-                    <button class="quick-action" onclick="sendQuickAction('Dame un plan de acción para esta semana basado en mi pipeline')">📅 Plan semanal</button>
-                    <button class="quick-action" onclick="sendQuickAction('¿Qué deals debo priorizar para cerrar este mes?')">🎯 Deals a cerrar</button>
+                    <button class="quick-action" onclick="sendQuickAction('Dame técnicas para manejar la objeción de precio')">💰 Objeción precio</button>
+                    <button class="quick-action" onclick="sendQuickAction('¿Cómo debo cerrar mi próxima demo?')">🎯 Técnicas de cierre</button>
                 </div>
                 <div class="file-upload-container" id="fileUploadContainer" style="display: none;">
                     <div class="files-list" id="filesList">
@@ -1147,78 +1149,127 @@
     </div>
 
     <script>
-        // Configuration
-        const N8N_WEBHOOK_URL = 'https://profitops.app.n8n.cloud/webhook/profitops-coaching';
-        const N8N_CHAT_URL = 'https://profitops.app.n8n.cloud/webhook/profitops-chat';
+        // Configuration - SEGUTRENDS
+        const N8N_WEBHOOK_URL = 'https://profitops.app.n8n.cloud/webhook/segutrends-dashboard';
+        const N8N_CHAT_URL = 'https://profitops.app.n8n.cloud/webhook/segutrends-chat';
         
         // State
         let pipelineData = null;
         let chatHistory = [];
-        let attachedFiles = []; // Array of {name, content, type}
+        let attachedFiles = [];
         
-        // Coach System Prompt
-        const COACH_SYSTEM_PROMPT = `Eres el Coach de Ventas B2B Personal de Alan Chapa, Director Comercial de Catalyst Group.
+        // Coach System Prompt - SEGUTRENDS / RAYMUNDO CHAPA
+        const COACH_SYSTEM_PROMPT = `Eres el Coach de Ventas Personalizado de SEGUTRENDS, un sistema de inteligencia artificial especializado en mejorar el desempeño del equipo comercial de Segutrends SAPI de CV, operando en la industria de Software/SaaS para el sector de Seguros.
 
-Tu rol es analizar llamadas de ventas, proporcionar feedback estructurado y ayudar a mejorar sistemáticamente el desempeño comercial.
+CONTEXTO ESPECÍFICO:
+- Empresa: Segutrends SAPI de CV (fundada 2005, casi 20 años en el mercado)
+- Producto: Multicotizador de autos y gastos médicos para líneas personales
+- Diferenciador: Capacidad de crear paquetes personalizados + cotización multi-ramo
+- Ubicación: Monterrey, operaciones nacionales
+- Tipo de Venta: Consultiva B2B
+- Ciclo de Venta: 10-30 días
+- Ticket Promedio: $8,400 MXN mensuales (renta recurrente)
+- Facturación Actual: $1,850,000 MXN mensuales
 
-CONTEXTO:
-- Alan tiene 10 años de experiencia en business development (Dropbox, Rubrik, Canonical)
-- Catalyst Group es una agencia B2B de outbound/ABM con 25+ clientes y ~$900K MXN/mes
-- Objetivo: Escalar ingresos de $245K a $400K MXN mensuales para octubre 2025
-- Proceso de ventas: Discovery estructurado, ciclos 15-45 días, ticket $38K-48K MXN/mes
+EQUIPO COMERCIAL:
+- 4 personas (1 SDR + 3 Vendedores)
+- Liderazgo: Armando Leal y Raymundo Chapa (Directores de Ventas)
+- Modalidad: 100% Remota
+- Experiencia: Moderada a mucha, pero SIN capacitación formal en metodologías
+- Fortaleza: Prospección, Discovery y Presentación
+- Debilidad Principal: NEGOCIACIÓN Y CIERRE
 
-FRAMEWORK DE CALIFICACIÓN (0-100 puntos):
-- C1: Preparación Pre-Llamada (0-15 pts)
-- C2: Discovery SPIN (0-25 pts)
-- C3: Calificación MEDDIC Light (0-15 pts)
-- C4: Challenger Sale (0-35 pts)
-- C5: Sandler & Cierre (0-10 pts)
+EL PROBLEMA CENTRAL: "Nos falta CERRAR"
+- Conversión Negociación → Cierre: solo 25% (PUNTO DE FALLA CRÍTICO)
+- Conversión Lead → Cliente: 25%
+- Primera reunión → Propuesta: 90%
+- Propuesta → Negociación: 80%
 
-METODOLOGÍAS (Ponderación):
-🥇 Challenger Sale (35%): Teach-Tailor-Take Control
-🥈 SPIN Selling (30%): Descubrimiento estructurado de dolor
-🥉 MEDDIC Light (20%): Calificación simplificada
-Sandler (12%): Up-Front Contracts y cierre
+OBJETIVO:
+- Meta 12 meses: $672,000 MXN en rentas nuevas anuales ($56,000 MXN/mes)
+- Esto = 6-7 clientes nuevos por mes
+- Expectativa: Resultados en 2-3 meses
 
-ESTILO DE COMUNICACIÓN:
-- Directo y accionable (evita teoría innecesaria)
-- Basado en evidencia (cita momentos específicos)
-- Cuantificado (usa scoring 0-100)
-- Constructivo (coaching, no crítica)
-- Formato ejecutivo (headlines, bullets, tablas)
+FRAMEWORK DE CALIFICACIÓN (0-100 puntos) - CALIBRADO PARA SEGUTRENDS:
+1. Sandler Selling (30 pts) - EL MÁS CRÍTICO
+   - Up-Front Contracts (0-10): ¿Estableció agenda, tiempo, siguiente paso?
+   - Pain Discovery (0-8): ¿Profundizó en dolor real?
+   - Budget Discussion (0-6): ¿Validó presupuesto?
+   - Decision Process (0-6): ¿Clarificó quién decide?
 
+2. Challenger Sale (25 pts)
+   - Teach (0-8): ¿Aportó insights sobre cotización/productividad?
+   - Tailor (0-8): ¿Personalizó según tipo de despacho?
+   - Take Control (0-9): ¿Manejó objeción de precio con confianza?
+
+3. SPIN Selling (25 pts)
+   - Situation (0-5): ¿Entendió contexto del despacho?
+   - Problem (0-6): ¿Identificó problemas de cotización?
+   - Implication (0-8): ¿Cuantificó impacto del problema?
+   - Need-Payoff (0-6): ¿Hizo que prospecto articule valor?
+
+4. MEDDIC Light (15 pts)
+   - Metrics (0-4): ¿Identificó métricas de éxito?
+   - Economic Buyer (0-4): ¿Confirmó al dueño como decisor?
+   - Decision Criteria (0-4): ¿Entendió qué evalúan?
+   - Champion (0-3): ¿Identificó quién empuja la decisión?
+
+5. Gap/Value (5 pts)
+   - Current State (0-2): ¿Documentó cómo cotizan hoy?
+   - Future State (0-2): ¿Pintó visión con Segutrends?
+   - Gap (0-1): ¿Hizo evidente la brecha?
+
+OBJECIONES MÁS FRECUENTES Y SCRIPTS:
+
+1. "Está muy caro"
+→ "Entiendo la preocupación. Si tu equipo pudiera cotizar 3x más rápido y cerrar 20% más pólizas, ¿cuánto representaría en comisiones adicionales? Exacto, eso es [X] veces el costo de Segutrends."
+
+2. "Yo cotizo poco y no se justifica"
+→ "Precisamente por eso tiene sentido. Cuando cotizas poco, cada cotización cuenta más. Con Segutrends aumentas tu tasa de cierre. ¿Qué pasaría si de 10 cotizaciones cerraras 4 en vez de 2?"
+
+3. "Puedo cotizar en los portales de las aseguradoras"
+→ "¿Cuánto tiempo te toma cotizar en 5 portales diferentes vs. una sola pantalla? Nuestros clientes pasan de 30 a 5 minutos. ¿Qué harías con 25 minutos extra por cotización?"
+
+SCRIPT UP-FRONT CONTRACT (Inicio Demo):
+"[Nombre], antes de empezar quiero asegurarme de aprovechar estos 60 minutos. Mi objetivo es mostrarte cómo Segutrends puede ayudarte a cotizar más rápido y cerrar más pólizas. Al final, si ves valor, hablamos de siguientes pasos. Y si no es para ti, está bien, solo pido que me lo digas directamente. ¿Te parece justo?"
+
+SCRIPT DE CIERRE (Post-Demo):
+"Basado en lo que vimos, ¿qué tan cerca estás de decir 'esto es lo que necesito'? Del 1 al 10... Ok, ¿qué te falta para llegar a 10? Si resolvemos eso, ¿estarías listo para empezar?"
+
+FORMATO DE ANÁLISIS DE LLAMADAS:
 Cuando analices una llamada, usa este formato:
-📊 SCORING GENERAL: XX/100 [🟢/🟡/🔴]
-Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
+1. Calificación Global: [X]/100 - [Nivel]
+2. Desglose: Sandler [X]/30, Challenger [X]/25, SPIN [X]/25, MEDDIC [X]/15, Gap [X]/5
+3. Momentos Clave: ✅ Lo que hizo BIEN | ❌ Oportunidades de MEJORA
+4. Enfoque en Cierre: UFC establecido, siguiente paso, compromiso obtenido
+5. Manejo de Objeciones: Objeción, respuesta, efectividad
+6. Recomendaciones: Acción inmediata, habilidad a desarrollar, script sugerido
 
-✅ LO QUE HICISTE EXCELENTE
-❌ ERRORES CRÍTICOS
-🎯 TOP 3 RECOMENDACIONES PRIORIZADAS`;
+PROPÓSITO:
+Llevar a Segutrends de 25% a 40%+ de conversión en cierre mediante coaching estructurado enfocado en técnicas Sandler y Challenger.`;
 
-        // LocalStorage key for chat history
-        const CHAT_STORAGE_KEY = 'profitops_chat_history';
+        // Chat history storage key
+        const CHAT_STORAGE_KEY = 'segutrends_chat_history';
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             loadDashboardData();
-            autoResizeTextarea();
             loadChatHistory();
+            autoResizeTextarea();
         });
 
         // Load chat history from localStorage
         function loadChatHistory() {
-            const savedHistory = localStorage.getItem(CHAT_STORAGE_KEY);
-            if (savedHistory) {
+            const saved = localStorage.getItem(CHAT_STORAGE_KEY);
+            if (saved) {
                 try {
-                    chatHistory = JSON.parse(savedHistory);
-                    // Render saved messages
-                    if (chatHistory.length > 0) {
-                        const chatMessages = document.getElementById('chatMessages');
-                        // Clear default welcome message
-                        chatMessages.innerHTML = '';
-                        // Add welcome message first
+                    chatHistory = JSON.parse(saved);
+                    const chatMessages = document.getElementById('chatMessages');
+                    chatMessages.innerHTML = '';
+                    
+                    if (chatHistory.length === 0) {
                         addWelcomeMessage();
-                        // Render all saved messages
+                    } else {
                         chatHistory.forEach(msg => {
                             addMessageToChat(msg.role, msg.content, false);
                         });
@@ -1233,7 +1284,6 @@ Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
         // Save chat history to localStorage
         function saveChatHistory() {
             try {
-                // Keep only last 50 messages to avoid localStorage limits
                 const historyToSave = chatHistory.slice(-50);
                 localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(historyToSave));
             } catch (e) {
@@ -1248,14 +1298,16 @@ Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
             messageDiv.className = 'message assistant';
             messageDiv.innerHTML = `
                 <div class="message-content">
-                    ¡Hola Alan! 👋 Soy tu Coach de Ventas B2B personal. 
+                    ¡Hola Raymundo! 👋 Soy tu Coach de Ventas B2B personal de Segutrends.
                     
-                    Estoy conectado a tu pipeline de Pipedrive y listo para ayudarte con:
+                    Estoy conectado a tu pipeline de Pipedrive y calibrado específicamente para tu negocio de multicotizadores de seguros. Puedo ayudarte con:
                     
                     • Análisis de tus llamadas de ventas (scoring 0-100)
-                    • Coaching personalizado usando SPIN, Challenger y MEDDIC
-                    • Preparación para llamadas importantes
-                    • Identificar patrones de mejora
+                    • Técnicas de CIERRE con metodología Sandler
+                    • Manejo de objeciones de precio
+                    • Preparación para demos importantes
+                    
+                    Tu objetivo: $56,000 MXN en rentas nuevas mensuales.
                     
                     ¿En qué te puedo ayudar hoy?
                 </div>
@@ -1292,9 +1344,8 @@ Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
             }
         });
 
-        // Download conversation as markdown or PDF
+        // Download conversation
         function downloadConversation(format) {
-            // Close the menu
             document.getElementById('downloadMenu').classList.remove('show');
             
             if (chatHistory.length === 0) {
@@ -1302,7 +1353,6 @@ Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
                 return;
             }
 
-            // Create content
             const now = new Date();
             const dateStr = now.toLocaleDateString('es-MX', { 
                 year: 'numeric', 
@@ -1315,33 +1365,31 @@ Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
             });
 
             if (format === 'md') {
-                // Markdown format
-                let markdown = `# Conversación con Coach de Ventas B2B\n`;
+                let markdown = `# Conversación con Coach de Ventas B2B - Segutrends\n`;
                 markdown += `**Fecha:** ${dateStr} - ${timeStr}\n`;
-                markdown += `**Usuario:** Alan Chapa\n\n`;
+                markdown += `**Usuario:** Raymundo Chapa\n\n`;
                 markdown += `---\n\n`;
 
                 chatHistory.forEach((msg) => {
                     if (msg.role === 'user') {
-                        markdown += `## 👤 Alan\n\n${msg.content}\n\n`;
+                        markdown += `## 👤 Raymundo\n\n${msg.content}\n\n`;
                     } else {
                         markdown += `## 🎯 Coach\n\n${msg.content}\n\n`;
                     }
                     markdown += `---\n\n`;
                 });
 
-                const filename = `ProfitOps_Chat_${now.toISOString().split('T')[0]}_${now.getHours()}${String(now.getMinutes()).padStart(2, '0')}.md`;
+                const filename = `Segutrends_Chat_${now.toISOString().split('T')[0]}_${now.getHours()}${String(now.getMinutes()).padStart(2, '0')}.md`;
                 downloadFile(markdown, filename, 'text/markdown');
 
             } else if (format === 'pdf') {
-                // PDF format using browser print
                 const printWindow = window.open('', '_blank');
                 
                 let html = `
                     <!DOCTYPE html>
                     <html>
                     <head>
-                        <title>Conversación ProfitOps - ${dateStr}</title>
+                        <title>Conversación Segutrends - ${dateStr}</title>
                         <style>
                             body { 
                                 font-family: 'Segoe UI', Arial, sans-serif; 
@@ -1390,16 +1438,16 @@ Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
                         </style>
                     </head>
                     <body>
-                        <h1>🎯 Conversación con Coach de Ventas B2B</h1>
+                        <h1>🎯 Conversación con Coach de Ventas B2B - Segutrends</h1>
                         <div class="meta">
                             <strong>Fecha:</strong> ${dateStr} - ${timeStr}<br>
-                            <strong>Usuario:</strong> Alan Chapa
+                            <strong>Usuario:</strong> Raymundo Chapa
                         </div>
                 `;
 
                 chatHistory.forEach((msg) => {
                     const roleClass = msg.role === 'user' ? 'user' : 'assistant';
-                    const roleName = msg.role === 'user' ? '👤 Alan' : '🎯 Coach';
+                    const roleName = msg.role === 'user' ? '👤 Raymundo' : '🎯 Coach';
                     const content = msg.content
                         .replace(/</g, '&lt;')
                         .replace(/>/g, '&gt;')
@@ -1450,10 +1498,8 @@ Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
                 const response = await fetch(N8N_WEBHOOK_URL);
                 const data = await response.json();
                 
-                // Store data for chat context
                 pipelineData = JSON.stringify(data, null, 2);
                 
-                // Update dashboard with new JSON structure
                 if (data.metricas) {
                     updateMetrics(data.metricas);
                     updateAlerts(data.accion_inmediata || []);
@@ -1482,29 +1528,21 @@ Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
             return `$${value.toLocaleString('es-MX')}`;
         }
 
-        // Format IMR/VTC
-        function formatIMRVTC(imr, vtc) {
-            const imrStr = formatCurrency(imr);
-            const vtcStr = formatCurrency(vtc);
-            return `${imrStr} IMR / ${vtcStr} VTC`;
-        }
-
         // Update Metrics
         function updateMetrics(metricas) {
             document.getElementById('metricPipeline').textContent = formatCurrency(metricas.pipeline_generado_imr || 0);
             document.getElementById('metricDeals').textContent = metricas.deals_abiertos || 0;
             document.getElementById('metricCierres').textContent = metricas.cierres_esta_semana || 0;
             
-            // Objetivo vs Ganado
-            const objetivo = metricas.objetivo_imr || 0;
+            const objetivo = metricas.objetivo_imr || 56000;
             const ganado = metricas.ganado_imr_mes || 0;
-            const mes = metricas.mes_objetivo || 'Mes';
+            const mes = metricas.mes_objetivo || 'Dic';
             
-            document.getElementById('metricObjetivoLabel').textContent = `Objetivo ${mes} (IMR)`;
+            document.getElementById('metricObjetivoLabel').textContent = `Objetivo ${mes} (Rentas)`;
             document.getElementById('metricObjetivo').textContent = `${formatCurrency(ganado)} / ${formatCurrency(objetivo)}`;
         }
 
-        // Update Alerts (Acción Inmediata)
+        // Update Alerts
         function updateAlerts(deals) {
             const alertsList = document.getElementById('alertsList');
             const alertsBadge = document.getElementById('alertsBadge');
@@ -1522,7 +1560,6 @@ Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
             }
             
             alertsList.innerHTML = deals.map(deal => {
-                // Determinar color basado en estado
                 const estado = deal.estado || 'gris';
                 let alertIcon = '⚪';
                 let alertClass = 'neutral';
@@ -1533,19 +1570,14 @@ Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
                 } else if (estado === 'verde') {
                     alertIcon = '🟢';
                     alertClass = 'success';
-                } else {
-                    alertIcon = '⚪';
-                    alertClass = 'neutral';
                 }
                 
-                // Formatear fecha de actividad
                 let activityDateStr = '';
                 if (deal.next_activity_date) {
                     const actDate = new Date(deal.next_activity_date);
                     activityDateStr = actDate.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
                 }
                 
-                // Mostrar subject de actividad con fecha o mensaje de estado
                 let activityDisplay = '';
                 if (deal.next_activity_subject) {
                     activityDisplay = `📋 ${deal.next_activity_subject}${activityDateStr ? ' • ' + activityDateStr : ''}`;
@@ -1553,10 +1585,8 @@ Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
                     activityDisplay = deal.estado_mensaje;
                 }
                 
-                // Format value as IMR / VTC
-                const valueDisplay = formatIMRVTC(deal.value_imr || 0, deal.value_vtc || 0);
+                const valueDisplay = formatCurrency(deal.value || deal.value_imr || 0);
                 
-                // Formatear fecha de cierre
                 let closeDateStr = 'Sin fecha';
                 if (deal.expected_close_date) {
                     const closeDate = new Date(deal.expected_close_date);
@@ -1569,13 +1599,13 @@ Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
                             ${alertIcon}
                         </div>
                         <div class="alert-content">
-                            <div class="alert-deal">${deal.deal_title}</div>
-                            <div class="alert-company">${deal.org_name} • ${deal.person_name || 'Sin contacto'}</div>
+                            <div class="alert-deal">${deal.deal_title || deal.title}</div>
+                            <div class="alert-company">${deal.org_name || 'Sin empresa'} • ${deal.person_name || 'Sin contacto'}</div>
                             <div class="alert-message">${activityDisplay}</div>
-                            <div class="alert-status">${deal.estado_mensaje}</div>
+                            <div class="alert-status">${deal.estado_mensaje || ''}</div>
                         </div>
                         <div class="alert-right">
-                            <div class="alert-value">${valueDisplay}</div>
+                            <div class="alert-value">${valueDisplay}/mes</div>
                             <div class="alert-close-date">Cierre: ${closeDateStr}</div>
                         </div>
                     </div>
@@ -1600,39 +1630,35 @@ Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
             prioritiesList.innerHTML = deals.map((deal, idx) => {
                 const fechaCierre = deal.expected_close_date ? new Date(deal.expected_close_date).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' }) : 'Sin fecha';
                 
-                // Determinar indicador basado en estado
                 const estado = deal.estado || 'gris';
                 let indicador = '⚪';
                 if (estado === 'rojo') indicador = '🔴';
                 else if (estado === 'verde') indicador = '🟢';
                 
-                // Format value as IMR / VTC
-                const valueDisplay = formatIMRVTC(deal.value_imr || 0, deal.value_vtc || 0);
+                const valueDisplay = formatCurrency(deal.value || deal.value_imr || 0);
                 
-                // Formatear fecha de actividad
                 let activityDateStr = '';
                 if (deal.next_activity_date) {
                     const actDate = new Date(deal.next_activity_date);
                     activityDateStr = actDate.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
                 }
                 
-                // Show next activity with date or status
                 let activityInfo = '';
                 if (deal.next_activity_subject) {
                     activityInfo = `📋 ${deal.next_activity_subject}${activityDateStr ? ' • ' + activityDateStr : ''}`;
                 } else {
-                    activityInfo = deal.estado_mensaje;
+                    activityInfo = deal.estado_mensaje || '';
                 }
                 
                 return `
                     <div class="priority-item">
                         <div class="priority-rank">${idx + 1}</div>
                         <div class="priority-content">
-                            <div class="priority-deal">${indicador} ${deal.deal_title}</div>
-                            <div class="priority-action">${deal.org_name} • Cierre: ${fechaCierre}</div>
+                            <div class="priority-deal">${indicador} ${deal.deal_title || deal.title}</div>
+                            <div class="priority-action">${deal.org_name || 'Sin empresa'} • Cierre: ${fechaCierre}</div>
                             <div class="priority-action">${activityInfo}</div>
                         </div>
-                        <div class="priority-value">${valueDisplay}</div>
+                        <div class="priority-value">${valueDisplay}/mes</div>
                     </div>
                 `;
             }).join('');
@@ -1650,7 +1676,6 @@ Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
             
             if (!message && attachedFiles.length === 0) return;
             
-            // Build message with attached files
             let displayMessage = message;
             let fullMessage = message;
             let fileNamesDisplay = '';
@@ -1658,13 +1683,11 @@ Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
             if (attachedFiles.length > 0) {
                 displayMessage = message || 'Analiza estos documentos';
                 
-                // Build display of file names
                 fileNamesDisplay = attachedFiles.map(f => {
                     const icon = f.type === 'image' ? '🖼️' : '📄';
                     return `${icon} ${f.name}`;
                 }).join('\n');
                 
-                // Build full message with all file contents
                 fullMessage = displayMessage + '\n\n';
                 
                 attachedFiles.forEach((file, index) => {
@@ -1676,14 +1699,12 @@ Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
                 });
             }
             
-            // Add user message to chat (show only the instruction and file names, not full content)
             const chatDisplayMessage = attachedFiles.length > 0 
                 ? `${fileNamesDisplay}\n\n${displayMessage}` 
                 : displayMessage;
             addMessageToChat('user', chatDisplayMessage);
             input.value = '';
             
-            // Prepare request body
             let requestBody = {
                 system: COACH_SYSTEM_PROMPT,
                 context: pipelineData || 'No hay datos de pipeline cargados aún.',
@@ -1691,13 +1712,8 @@ Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
                 message: fullMessage
             };
             
-            // Clear attached files after preparing request
             removeAllFiles();
-            
-            // Show typing indicator
             showTypingIndicator();
-            
-            // Add to history
             chatHistory.push({ role: 'user', content: displayMessage });
             
             try {
@@ -1718,7 +1734,6 @@ Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
                     chatHistory.push({ role: 'assistant', content: assistantMessage });
                     addMessageToChat('assistant', assistantMessage);
                 } else if (data.text) {
-                    // Alternative response format
                     chatHistory.push({ role: 'assistant', content: data.text });
                     addMessageToChat('assistant', data.text);
                 } else {
@@ -1736,7 +1751,6 @@ Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${role}`;
             
-            // Format content (convert markdown-like formatting)
             const formattedContent = content
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                 .replace(/\n/g, '<br>');
@@ -1749,7 +1763,6 @@ Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
             
-            // Save to localStorage if this is a new message (not loading from history)
             if (shouldSave) {
                 saveChatHistory();
             }
@@ -1792,13 +1805,12 @@ Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
         }
 
         // File handling functions
-        
         async function handleFileSelect(event) {
             const files = event.target.files;
             if (!files || files.length === 0) return;
 
-            const maxSize = 5 * 1024 * 1024; // 5MB per file
-            const maxFiles = 5; // Maximum 5 files at once
+            const maxSize = 5 * 1024 * 1024;
+            const maxFiles = 5;
 
             if (attachedFiles.length + files.length > maxFiles) {
                 alert(`Máximo ${maxFiles} archivos a la vez.`);
@@ -1816,7 +1828,6 @@ Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
                 let type = 'text';
 
                 try {
-                    // Text-based files
                     if (extension === 'txt' || extension === 'vtt') {
                         content = await readTextFile(file);
                         type = 'text';
@@ -1826,9 +1837,7 @@ Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
                     } else if (extension === 'pdf') {
                         content = await readPdfFile(file);
                         type = 'text';
-                    } 
-                    // Image files
-                    else if (['png', 'jpg', 'jpeg', 'webp'].includes(extension)) {
+                    } else if (['png', 'jpg', 'jpeg', 'webp'].includes(extension)) {
                         content = await readImageFile(file);
                         type = 'image';
                     } else {
@@ -1836,7 +1845,6 @@ Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
                         continue;
                     }
 
-                    // Add to attachedFiles array
                     attachedFiles.push({
                         name: file.name,
                         content: content,
@@ -1849,10 +1857,7 @@ Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
                 }
             }
 
-            // Update UI
             updateFilesUI();
-            
-            // Reset input so same file can be selected again
             event.target.value = '';
         }
 
@@ -1879,12 +1884,7 @@ Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
                 `;
             }).join('');
 
-            // Update placeholder
-            const hasImages = attachedFiles.some(f => f.type === 'image');
-            const placeholderText = hasImages 
-                ? 'Escribe instrucciones para analizar los archivos adjuntos...'
-                : 'Escribe instrucciones para analizar los archivos adjuntos...';
-            document.getElementById('chatInput').placeholder = placeholderText;
+            document.getElementById('chatInput').placeholder = 'Escribe instrucciones para analizar los archivos adjuntos...';
         }
 
         function removeFileByIndex(index) {
@@ -1898,7 +1898,6 @@ Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
             document.getElementById('fileInput').value = '';
         }
 
-        // Read image file as base64
         function readImageFile(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -1918,7 +1917,6 @@ Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
         }
 
         async function readDocxFile(file) {
-            // Load mammoth.js dynamically if not loaded
             if (typeof mammoth === 'undefined') {
                 await loadScript('https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js');
             }
@@ -1929,7 +1927,6 @@ Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
         }
 
         async function readPdfFile(file) {
-            // Load pdf.js dynamically if not loaded
             if (typeof pdfjsLib === 'undefined') {
                 await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
                 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
