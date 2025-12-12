@@ -1,0 +1,1641 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProfitOps - Smart RevOps</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0f1729;
+            --bg-secondary: #1a2744;
+            --bg-card: #1e2d4a;
+            --bg-hover: #253552;
+            --accent-cyan: #00d4aa;
+            --accent-blue: #00b4d8;
+            --accent-gradient: linear-gradient(135deg, #00d4aa 0%, #00b4d8 100%);
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: #2d3f5f;
+            --alert-red: #ef4444;
+            --alert-yellow: #f59e0b;
+            --alert-green: #10b981;
+            --shadow-glow: 0 0 40px rgba(0, 212, 170, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Background Effects */
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(0, 212, 170, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 212, 170, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-glow {
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 20%, rgba(0, 212, 170, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 80%, rgba(0, 180, 216, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: rgba(15, 23, 41, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            z-index: 1000;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-gradient);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .logo-text {
+            font-size: 22px;
+            font-weight: 600;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-name {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .user-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* Main Layout */
+        .main-container {
+            position: relative;
+            z-index: 1;
+            padding-top: 70px;
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Dashboard Panel */
+        .dashboard-panel {
+            flex: 1;
+            padding: 25px;
+            overflow-y: auto;
+            max-width: 55%;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 16px;
+            background: var(--accent-gradient);
+            border-radius: 2px;
+        }
+
+        /* Metrics Cards */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .metric-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            border-color: var(--accent-cyan);
+            box-shadow: var(--shadow-glow);
+            transform: translateY(-2px);
+        }
+
+        .metric-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .metric-value {
+            font-size: 26px;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .metric-change {
+            font-size: 12px;
+            color: var(--alert-green);
+            margin-top: 5px;
+        }
+
+        .metric-change.negative {
+            color: var(--alert-red);
+        }
+
+        /* Alerts Section */
+        .alerts-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .alerts-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .alerts-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .alerts-badge {
+            background: var(--alert-red);
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .alert-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--alert-red);
+            transition: all 0.2s ease;
+        }
+
+        .alert-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .alert-item.warning {
+            border-left-color: var(--alert-yellow);
+        }
+
+        .alert-item.info {
+            border-left-color: var(--accent-cyan);
+        }
+
+        .alert-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .alert-icon.critical {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--alert-red);
+        }
+
+        .alert-icon.warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--alert-yellow);
+        }
+
+        .alert-icon.success {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--alert-green);
+        }
+
+        .alert-icon.neutral {
+            background: rgba(148, 163, 184, 0.2);
+            color: var(--text-muted);
+        }
+
+        .alert-item.critical {
+            border-left: 3px solid var(--alert-red);
+        }
+
+        .alert-item.success {
+            border-left: 3px solid var(--alert-green);
+        }
+
+        .alert-item.neutral {
+            border-left: 3px solid var(--text-muted);
+        }
+
+        .alert-status {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 3px;
+            font-style: italic;
+        }
+
+        /* Legend Section */
+        .legend-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin: 15px 20px;
+        }
+
+        .legend-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+        }
+
+        .legend-items {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .legend-icon {
+            font-size: 14px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .legend-text {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-deal {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+
+        .alert-company {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .alert-message {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .alert-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            text-align: right;
+        }
+
+        .alert-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+        }
+
+        .alert-close-date {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Top Priorities */
+        .priorities-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .priority-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: var(--bg-secondary);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .priority-item:hover {
+            background: var(--bg-hover);
+            transform: translateX(5px);
+        }
+
+        .priority-rank {
+            width: 30px;
+            height: 30px;
+            background: var(--accent-gradient);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .priority-content {
+            flex: 1;
+        }
+
+        .priority-deal {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .priority-action {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .priority-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent-cyan);
+        }
+
+        /* Chat Panel */
+        .chat-panel {
+            width: 45%;
+            border-left: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            background: rgba(26, 39, 68, 0.5);
+        }
+
+        .chat-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .chat-header-left {
+            flex: 1;
+        }
+
+        .chat-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .new-chat-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .new-chat-btn:hover {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            background: rgba(0, 212, 170, 0.1);
+        }
+
+        .chat-title-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--accent-gradient);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .chat-subtitle {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .chat-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--alert-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .status-text {
+            font-size: 11px;
+            color: var(--alert-green);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 85%;
+            animation: messageIn 0.3s ease;
+        }
+
+        @keyframes messageIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.assistant {
+            align-self: flex-start;
+        }
+
+        .message.user {
+            align-self: flex-end;
+        }
+
+        .message-content {
+            padding: 14px 18px;
+            border-radius: 16px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .message.assistant .message-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-bottom-left-radius: 4px;
+        }
+
+        .message.user .message-content {
+            background: var(--accent-gradient);
+            color: var(--bg-primary);
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-time {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 5px;
+            padding: 0 5px;
+        }
+
+        .message.user .message-time {
+            text-align: right;
+        }
+
+        /* Chat Input */
+        .chat-input-container {
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px 18px;
+            color: var(--text-primary);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 14px;
+            resize: none;
+            min-height: 50px;
+            max-height: 120px;
+            transition: all 0.2s ease;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 3px rgba(0, 212, 170, 0.1);
+        }
+
+        .chat-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .send-button {
+            width: 50px;
+            height: 50px;
+            background: var(--accent-gradient);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .send-button:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .send-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .send-button svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--bg-primary);
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .quick-action {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 8px 14px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .quick-action:hover {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            background: rgba(0, 212, 170, 0.1);
+        }
+
+        /* Loading Animation */
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 14px 18px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            border-bottom-left-radius: 4px;
+            width: fit-content;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: 0s; }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingBounce {
+            0%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-6px); }
+        }
+
+        /* Refresh Button */
+        .refresh-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 16px;
+            color: var(--text-secondary);
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .refresh-btn:hover {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        .refresh-btn.loading svg {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-cyan);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        /* File Upload */
+        .file-upload-container {
+            margin-bottom: 12px;
+        }
+
+        .file-preview {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--accent-cyan);
+            border-radius: 10px;
+            padding: 10px 15px;
+        }
+
+        .file-icon {
+            font-size: 20px;
+        }
+
+        .file-name {
+            flex: 1;
+            font-size: 13px;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .file-remove {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .file-remove:hover {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--alert-red);
+        }
+
+        .attach-button {
+            width: 50px;
+            height: 50px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            color: var(--text-secondary);
+        }
+
+        .attach-button:hover {
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+            background: rgba(0, 212, 170, 0.1);
+        }
+
+        .attach-button svg {
+            stroke: currentColor;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .main-container {
+                flex-direction: column;
+            }
+            .dashboard-panel,
+            .chat-panel {
+                max-width: 100%;
+                width: 100%;
+            }
+            .chat-panel {
+                height: 50vh;
+                border-left: none;
+                border-top: 1px solid var(--border-color);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-glow"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo-container">
+            <div class="logo-icon">P</div>
+            <div>
+                <div class="logo-text">Profit Ops</div>
+                <div class="logo-subtitle">Smart RevOps</div>
+            </div>
+        </div>
+        <div class="user-info">
+            <span class="user-name">Alan Chapa</span>
+            <div class="user-avatar">AC</div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Dashboard Panel -->
+        <div class="dashboard-panel">
+            <div class="section-title">
+                Métricas del Pipeline
+                <button class="refresh-btn" onclick="loadDashboardData()" id="refreshBtn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                    </svg>
+                    Actualizar
+                </button>
+            </div>
+
+            <!-- Metrics Grid -->
+            <div class="metrics-grid" id="metricsGrid">
+                <div class="metric-card">
+                    <div class="metric-label">Pipeline Generado (IMR)</div>
+                    <div class="metric-value" id="metricPipeline">--</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Deals Abiertos</div>
+                    <div class="metric-value" id="metricDeals">--</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Cierres Esta Semana</div>
+                    <div class="metric-value" id="metricCierres">--</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label" id="metricObjetivoLabel">Objetivo Dic (IMR)</div>
+                    <div class="metric-value" id="metricObjetivo">--</div>
+                </div>
+            </div>
+
+            <!-- Alerts Section -->
+            <div class="section-title">Acción Inmediata</div>
+            <div class="alerts-container">
+                <div class="alerts-header">
+                    <span class="alerts-title">🚨 Deals que Requieren Atención</span>
+                    <span class="alerts-badge" id="alertsBadge">0</span>
+                </div>
+                <div id="alertsList">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📊</div>
+                        <p>Cargando alertas del pipeline...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Próximos Cierres -->
+            <div class="section-title">Próximos Cierres (14 días)</div>
+            <div class="priorities-container" id="prioritiesList">
+                <div class="empty-state">
+                    <div class="empty-state-icon">🎯</div>
+                    <p>Cargando próximos cierres...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Panel -->
+        <div class="chat-panel">
+            <!-- Leyenda de Alertas -->
+            <div class="legend-container">
+                <div class="legend-title">Leyenda de Alertas</div>
+                <div class="legend-items">
+                    <div class="legend-item">
+                        <span class="legend-icon red">🔴</span>
+                        <span class="legend-text">Sin actividad | Actividad atrasada | Fecha de cierre vencida</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-icon green">🟢</span>
+                        <span class="legend-text">Actividad programada para hoy</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-icon gray">⚪</span>
+                        <span class="legend-text">Actividad programada para el futuro</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-header">
+                <div class="chat-header-left">
+                    <div class="chat-title">
+                        <div class="chat-title-icon">🎯</div>
+                        Coach de Ventas B2B
+                    </div>
+                    <div class="chat-subtitle">Tu asistente de coaching personalizado</div>
+                    <div class="chat-status">
+                        <div class="status-dot"></div>
+                        <span class="status-text">Activo</span>
+                    </div>
+                </div>
+                <button class="new-chat-btn" onclick="startNewConversation()">
+                    ✨ Nueva conversación
+                </button>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="message assistant">
+                    <div class="message-content">
+                        ¡Hola Alan! 👋 Soy tu Coach de Ventas B2B personal. 
+                        
+                        Estoy conectado a tu pipeline de Pipedrive y listo para ayudarte con:
+                        
+                        • Análisis de tus llamadas de ventas (scoring 0-100)
+                        • Coaching personalizado usando SPIN, Challenger y MEDDIC
+                        • Preparación para llamadas importantes
+                        • Identificar patrones de mejora
+                        
+                        ¿En qué te puedo ayudar hoy?
+                    </div>
+                    <div class="message-time">Ahora</div>
+                </div>
+            </div>
+
+            <div class="chat-input-container">
+                <div class="quick-actions">
+                    <button class="quick-action" onclick="sendQuickAction('Analiza mis alertas de hoy y dame las 3 acciones más urgentes')">📊 Analizar alertas</button>
+                    <button class="quick-action" onclick="sendQuickAction('Dame un plan de acción para esta semana basado en mi pipeline')">📅 Plan semanal</button>
+                    <button class="quick-action" onclick="sendQuickAction('¿Qué deals debo priorizar para cerrar este mes?')">🎯 Deals a cerrar</button>
+                </div>
+                <div class="file-upload-container" id="fileUploadContainer" style="display: none;">
+                    <div class="file-preview">
+                        <span class="file-icon">📄</span>
+                        <span class="file-name" id="fileName"></span>
+                        <button class="file-remove" onclick="removeFile()">✕</button>
+                    </div>
+                </div>
+                <div class="chat-input-wrapper">
+                    <input type="file" id="fileInput" accept=".txt,.docx,.pdf" style="display: none;" onchange="handleFileSelect(event)">
+                    <button class="attach-button" onclick="document.getElementById('fileInput').click()" title="Adjuntar archivo">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                        </svg>
+                    </button>
+                    <textarea 
+                        class="chat-input" 
+                        id="chatInput" 
+                        placeholder="Escribe tu mensaje o comparte un transcript de llamada..."
+                        rows="1"
+                        onkeydown="handleKeyDown(event)"
+                    ></textarea>
+                    <button class="send-button" onclick="sendMessage()" id="sendBtn">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const N8N_WEBHOOK_URL = 'https://profitops.app.n8n.cloud/webhook/profitops-coaching';
+        const N8N_CHAT_URL = 'https://profitops.app.n8n.cloud/webhook/profitops-chat';
+        
+        // State
+        let pipelineData = null;
+        let chatHistory = [];
+        let attachedFileContent = null;
+        let attachedFileName = null;
+        
+        // Coach System Prompt
+        const COACH_SYSTEM_PROMPT = `Eres el Coach de Ventas B2B Personal de Alan Chapa, Director Comercial de Catalyst Group.
+
+Tu rol es analizar llamadas de ventas, proporcionar feedback estructurado y ayudar a mejorar sistemáticamente el desempeño comercial.
+
+CONTEXTO:
+- Alan tiene 10 años de experiencia en business development (Dropbox, Rubrik, Canonical)
+- Catalyst Group es una agencia B2B de outbound/ABM con 25+ clientes y ~$900K MXN/mes
+- Objetivo: Escalar ingresos de $245K a $400K MXN mensuales para octubre 2025
+- Proceso de ventas: Discovery estructurado, ciclos 15-45 días, ticket $38K-48K MXN/mes
+
+FRAMEWORK DE CALIFICACIÓN (0-100 puntos):
+- C1: Preparación Pre-Llamada (0-15 pts)
+- C2: Discovery SPIN (0-25 pts)
+- C3: Calificación MEDDIC Light (0-15 pts)
+- C4: Challenger Sale (0-35 pts)
+- C5: Sandler & Cierre (0-10 pts)
+
+METODOLOGÍAS (Ponderación):
+🥇 Challenger Sale (35%): Teach-Tailor-Take Control
+🥈 SPIN Selling (30%): Descubrimiento estructurado de dolor
+🥉 MEDDIC Light (20%): Calificación simplificada
+Sandler (12%): Up-Front Contracts y cierre
+
+ESTILO DE COMUNICACIÓN:
+- Directo y accionable (evita teoría innecesaria)
+- Basado en evidencia (cita momentos específicos)
+- Cuantificado (usa scoring 0-100)
+- Constructivo (coaching, no crítica)
+- Formato ejecutivo (headlines, bullets, tablas)
+
+Cuando analices una llamada, usa este formato:
+📊 SCORING GENERAL: XX/100 [🟢/🟡/🔴]
+Desglose: C1: X/15 | C2: X/25 | C3: X/15 | C4: X/35 | C5: X/10
+
+✅ LO QUE HICISTE EXCELENTE
+❌ ERRORES CRÍTICOS
+🎯 TOP 3 RECOMENDACIONES PRIORIZADAS`;
+
+        // LocalStorage key for chat history
+        const CHAT_STORAGE_KEY = 'profitops_chat_history';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDashboardData();
+            autoResizeTextarea();
+            loadChatHistory();
+        });
+
+        // Load chat history from localStorage
+        function loadChatHistory() {
+            const savedHistory = localStorage.getItem(CHAT_STORAGE_KEY);
+            if (savedHistory) {
+                try {
+                    chatHistory = JSON.parse(savedHistory);
+                    // Render saved messages
+                    if (chatHistory.length > 0) {
+                        const chatMessages = document.getElementById('chatMessages');
+                        // Clear default welcome message
+                        chatMessages.innerHTML = '';
+                        // Add welcome message first
+                        addWelcomeMessage();
+                        // Render all saved messages
+                        chatHistory.forEach(msg => {
+                            addMessageToChat(msg.role, msg.content, false);
+                        });
+                    }
+                } catch (e) {
+                    console.error('Error loading chat history:', e);
+                    chatHistory = [];
+                }
+            }
+        }
+
+        // Save chat history to localStorage
+        function saveChatHistory() {
+            try {
+                // Keep only last 50 messages to avoid localStorage limits
+                const historyToSave = chatHistory.slice(-50);
+                localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(historyToSave));
+            } catch (e) {
+                console.error('Error saving chat history:', e);
+            }
+        }
+
+        // Add welcome message
+        function addWelcomeMessage() {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message assistant';
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    ¡Hola Alan! 👋 Soy tu Coach de Ventas B2B personal. 
+                    
+                    Estoy conectado a tu pipeline de Pipedrive y listo para ayudarte con:
+                    
+                    • Análisis de tus llamadas de ventas (scoring 0-100)
+                    • Coaching personalizado usando SPIN, Challenger y MEDDIC
+                    • Preparación para llamadas importantes
+                    • Identificar patrones de mejora
+                    
+                    ¿En qué te puedo ayudar hoy?
+                </div>
+                <div class="message-time">Ahora</div>
+            `;
+            chatMessages.appendChild(messageDiv);
+        }
+
+        // Start new conversation
+        function startNewConversation() {
+            if (chatHistory.length > 0) {
+                if (confirm('¿Iniciar nueva conversación? El historial actual se borrará.')) {
+                    chatHistory = [];
+                    localStorage.removeItem(CHAT_STORAGE_KEY);
+                    const chatMessages = document.getElementById('chatMessages');
+                    chatMessages.innerHTML = '';
+                    addWelcomeMessage();
+                }
+            }
+        }
+
+        // Load Dashboard Data
+        async function loadDashboardData() {
+            const refreshBtn = document.getElementById('refreshBtn');
+            refreshBtn.classList.add('loading');
+            
+            try {
+                const response = await fetch(N8N_WEBHOOK_URL);
+                const data = await response.json();
+                
+                // Store data for chat context
+                pipelineData = JSON.stringify(data, null, 2);
+                
+                // Update dashboard with new JSON structure
+                if (data.metricas) {
+                    updateMetrics(data.metricas);
+                    updateAlerts(data.accion_inmediata || []);
+                    updateProximosCierres(data.proximos_cierres || []);
+                }
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('alertsList').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⚠️</div>
+                        <p>Error al cargar datos. Verifica la conexión.</p>
+                    </div>
+                `;
+            } finally {
+                refreshBtn.classList.remove('loading');
+            }
+        }
+
+        // Format currency
+        function formatCurrency(value) {
+            if (value >= 1000000) {
+                return `$${(value / 1000000).toFixed(2)}M`;
+            } else if (value >= 1000) {
+                return `$${(value / 1000).toFixed(0)}K`;
+            }
+            return `$${value.toLocaleString('es-MX')}`;
+        }
+
+        // Format IMR/VTC
+        function formatIMRVTC(imr, vtc) {
+            const imrStr = formatCurrency(imr);
+            const vtcStr = formatCurrency(vtc);
+            return `${imrStr} IMR / ${vtcStr} VTC`;
+        }
+
+        // Update Metrics
+        function updateMetrics(metricas) {
+            document.getElementById('metricPipeline').textContent = formatCurrency(metricas.pipeline_generado_imr || 0);
+            document.getElementById('metricDeals').textContent = metricas.deals_abiertos || 0;
+            document.getElementById('metricCierres').textContent = metricas.cierres_esta_semana || 0;
+            
+            // Objetivo vs Ganado
+            const objetivo = metricas.objetivo_imr || 0;
+            const ganado = metricas.ganado_imr_mes || 0;
+            const mes = metricas.mes_objetivo || 'Mes';
+            
+            document.getElementById('metricObjetivoLabel').textContent = `Objetivo ${mes} (IMR)`;
+            document.getElementById('metricObjetivo').textContent = `${formatCurrency(ganado)} / ${formatCurrency(objetivo)}`;
+        }
+
+        // Update Alerts (Acción Inmediata)
+        function updateAlerts(deals) {
+            const alertsList = document.getElementById('alertsList');
+            const alertsBadge = document.getElementById('alertsBadge');
+            
+            alertsBadge.textContent = deals.length;
+            
+            if (deals.length === 0) {
+                alertsList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">✅</div>
+                        <p>¡No hay deals que requieran acción inmediata!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            alertsList.innerHTML = deals.map(deal => {
+                // Determinar color basado en estado
+                const estado = deal.estado || 'gris';
+                let alertIcon = '⚪';
+                let alertClass = 'neutral';
+                
+                if (estado === 'rojo') {
+                    alertIcon = '🔴';
+                    alertClass = 'critical';
+                } else if (estado === 'verde') {
+                    alertIcon = '🟢';
+                    alertClass = 'success';
+                } else {
+                    alertIcon = '⚪';
+                    alertClass = 'neutral';
+                }
+                
+                // Formatear fecha de actividad
+                let activityDateStr = '';
+                if (deal.next_activity_date) {
+                    const actDate = new Date(deal.next_activity_date);
+                    activityDateStr = actDate.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
+                }
+                
+                // Mostrar subject de actividad con fecha o mensaje de estado
+                let activityDisplay = '';
+                if (deal.next_activity_subject) {
+                    activityDisplay = `📋 ${deal.next_activity_subject}${activityDateStr ? ' • ' + activityDateStr : ''}`;
+                } else {
+                    activityDisplay = deal.estado_mensaje;
+                }
+                
+                // Format value as IMR / VTC
+                const valueDisplay = formatIMRVTC(deal.value_imr || 0, deal.value_vtc || 0);
+                
+                // Formatear fecha de cierre
+                let closeDateStr = 'Sin fecha';
+                if (deal.expected_close_date) {
+                    const closeDate = new Date(deal.expected_close_date);
+                    closeDateStr = closeDate.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
+                }
+                
+                return `
+                    <div class="alert-item ${alertClass}">
+                        <div class="alert-icon ${alertClass}">
+                            ${alertIcon}
+                        </div>
+                        <div class="alert-content">
+                            <div class="alert-deal">${deal.deal_title}</div>
+                            <div class="alert-company">${deal.org_name} • ${deal.person_name || 'Sin contacto'}</div>
+                            <div class="alert-message">${activityDisplay}</div>
+                            <div class="alert-status">${deal.estado_mensaje}</div>
+                        </div>
+                        <div class="alert-right">
+                            <div class="alert-value">${valueDisplay}</div>
+                            <div class="alert-close-date">Cierre: ${closeDateStr}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Update Próximos Cierres
+        function updateProximosCierres(deals) {
+            const prioritiesList = document.getElementById('prioritiesList');
+            
+            if (deals.length === 0) {
+                prioritiesList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📅</div>
+                        <p>No hay cierres programados en los próximos 14 días</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            prioritiesList.innerHTML = deals.map((deal, idx) => {
+                const fechaCierre = deal.expected_close_date ? new Date(deal.expected_close_date).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' }) : 'Sin fecha';
+                
+                // Determinar indicador basado en estado
+                const estado = deal.estado || 'gris';
+                let indicador = '⚪';
+                if (estado === 'rojo') indicador = '🔴';
+                else if (estado === 'verde') indicador = '🟢';
+                
+                // Format value as IMR / VTC
+                const valueDisplay = formatIMRVTC(deal.value_imr || 0, deal.value_vtc || 0);
+                
+                // Formatear fecha de actividad
+                let activityDateStr = '';
+                if (deal.next_activity_date) {
+                    const actDate = new Date(deal.next_activity_date);
+                    activityDateStr = actDate.toLocaleDateString('es-MX', { day: 'numeric', month: 'short' });
+                }
+                
+                // Show next activity with date or status
+                let activityInfo = '';
+                if (deal.next_activity_subject) {
+                    activityInfo = `📋 ${deal.next_activity_subject}${activityDateStr ? ' • ' + activityDateStr : ''}`;
+                } else {
+                    activityInfo = deal.estado_mensaje;
+                }
+                
+                return `
+                    <div class="priority-item">
+                        <div class="priority-rank">${idx + 1}</div>
+                        <div class="priority-content">
+                            <div class="priority-deal">${indicador} ${deal.deal_title}</div>
+                            <div class="priority-action">${deal.org_name} • Cierre: ${fechaCierre}</div>
+                            <div class="priority-action">${activityInfo}</div>
+                        </div>
+                        <div class="priority-value">${valueDisplay}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Chat Functions
+        function sendQuickAction(text) {
+            document.getElementById('chatInput').value = text;
+            sendMessage();
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            let message = input.value.trim();
+            
+            if (!message && !attachedFileContent) return;
+            
+            // If there's an attached file, include it in the message
+            let displayMessage = message;
+            if (attachedFileContent) {
+                displayMessage = message || 'Analiza este documento';
+                message = `${displayMessage}\n\n--- CONTENIDO DEL ARCHIVO: ${attachedFileName} ---\n\n${attachedFileContent}`;
+            }
+            
+            // Add user message to chat (show only the instruction, not the full file)
+            addMessageToChat('user', attachedFileContent ? `📄 ${attachedFileName}\n${displayMessage}` : displayMessage);
+            input.value = '';
+            
+            // Clear attached file after sending
+            if (attachedFileContent) {
+                removeFile();
+            }
+            
+            // Show typing indicator
+            showTypingIndicator();
+            
+            // Prepare chat history for context
+            const historyText = chatHistory.map(h => `${h.role}: ${h.content}`).join('\n');
+            
+            // Add to history
+            chatHistory.push({ role: 'user', content: message });
+            
+            try {
+                const response = await fetch(N8N_CHAT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        system: COACH_SYSTEM_PROMPT,
+                        context: pipelineData || 'No hay datos de pipeline cargados aún.',
+                        history: historyText,
+                        message: message
+                    })
+                });
+                
+                const data = await response.json();
+                
+                hideTypingIndicator();
+                
+                if (data.content && data.content[0]) {
+                    const assistantMessage = data.content[0].text;
+                    chatHistory.push({ role: 'assistant', content: assistantMessage });
+                    addMessageToChat('assistant', assistantMessage);
+                } else if (data.text) {
+                    // Alternative response format
+                    chatHistory.push({ role: 'assistant', content: data.text });
+                    addMessageToChat('assistant', data.text);
+                } else {
+                    addMessageToChat('assistant', 'Recibí tu mensaje pero no pude procesar la respuesta. Intenta de nuevo.');
+                }
+            } catch (error) {
+                hideTypingIndicator();
+                addMessageToChat('assistant', 'Lo siento, hubo un error al conectar con el Coach. Por favor verifica que el workflow esté activo e intenta de nuevo.');
+                console.error('Chat error:', error);
+            }
+        }
+
+        function addMessageToChat(role, content, shouldSave = true) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            
+            // Format content (convert markdown-like formatting)
+            const formattedContent = content
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>');
+            
+            messageDiv.innerHTML = `
+                <div class="message-content">${formattedContent}</div>
+                <div class="message-time">${new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' })}</div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Save to localStorage if this is a new message (not loading from history)
+            if (shouldSave) {
+                saveChatHistory();
+            }
+        }
+
+        function showTypingIndicator() {
+            const chatMessages = document.getElementById('chatMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message assistant';
+            typingDiv.id = 'typingIndicator';
+            typingDiv.innerHTML = `
+                <div class="typing-indicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            const typing = document.getElementById('typingIndicator');
+            if (typing) typing.remove();
+        }
+
+        function handleKeyDown(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        function autoResizeTextarea() {
+            const textarea = document.getElementById('chatInput');
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+            });
+        }
+
+        // File handling functions
+        async function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const maxSize = 5 * 1024 * 1024; // 5MB limit
+            if (file.size > maxSize) {
+                alert('El archivo es muy grande. Máximo 5MB.');
+                return;
+            }
+
+            attachedFileName = file.name;
+            const extension = file.name.split('.').pop().toLowerCase();
+
+            try {
+                if (extension === 'txt') {
+                    attachedFileContent = await readTextFile(file);
+                } else if (extension === 'docx') {
+                    attachedFileContent = await readDocxFile(file);
+                } else if (extension === 'pdf') {
+                    attachedFileContent = await readPdfFile(file);
+                } else {
+                    alert('Formato no soportado. Usa .txt, .docx o .pdf');
+                    return;
+                }
+
+                // Show file preview
+                document.getElementById('fileUploadContainer').style.display = 'block';
+                document.getElementById('fileName').textContent = file.name;
+                
+                // Update placeholder
+                document.getElementById('chatInput').placeholder = 'Escribe instrucciones para analizar el archivo adjunto...';
+
+            } catch (error) {
+                console.error('Error reading file:', error);
+                alert('Error al leer el archivo. Intenta de nuevo.');
+            }
+        }
+
+        function readTextFile(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = (e) => reject(e);
+                reader.readAsText(file);
+            });
+        }
+
+        async function readDocxFile(file) {
+            // Load mammoth.js dynamically if not loaded
+            if (typeof mammoth === 'undefined') {
+                await loadScript('https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js');
+            }
+            
+            const arrayBuffer = await file.arrayBuffer();
+            const result = await mammoth.extractRawText({ arrayBuffer });
+            return result.value;
+        }
+
+        async function readPdfFile(file) {
+            // Load pdf.js dynamically if not loaded
+            if (typeof pdfjsLib === 'undefined') {
+                await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
+                pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            }
+
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+            let text = '';
+
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const content = await page.getTextContent();
+                const pageText = content.items.map(item => item.str).join(' ');
+                text += pageText + '\n\n';
+            }
+
+            return text;
+        }
+
+        function loadScript(src) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        }
+
+        function removeFile() {
+            attachedFileContent = null;
+            attachedFileName = null;
+            document.getElementById('fileUploadContainer').style.display = 'none';
+            document.getElementById('fileInput').value = '';
+            document.getElementById('chatInput').placeholder = 'Escribe tu mensaje o comparte un transcript de llamada...';
+        }
+    </script>
+</body>
+</html>
